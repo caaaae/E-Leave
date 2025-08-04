@@ -1,0 +1,256 @@
+.imageLogo {
+    width: 35%;
+}
+
+/* --- Header Section --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.welcome-message {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-top: 10px;
+}
+
+/* --- Main Content Box --- */
+.main-content-box {
+    background-color: #f5f5f5;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 35px;
+    width: 100%;
+    max-width: 1100px;
+    box-shadow: 0 0 5px rgba(0,0,0,.05), 2px 2px 5px rgba(0,0,0,.1);
+    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* Pushes button to the right */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.leave-history-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0; /* Reset default margin */
+}
+
+.request-leave-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px; /* Pill shape */
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); /* Subtle shadow */
+}
+
+.request-leave-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* --- Leave History Table --- */
+.leave-table {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.table-header {
+    display: grid;
+    /* Adjusted: Added a 5th column for actions (e.g., 180px wide) */
+    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 180px; /* Adjust column widths as needed */
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--light-text-color);
+    font-size: 18px;
+}
+
+/* New style for the scrollable table body */
+.table-body-scrollable {
+    max-height: 50vh; /* **MAIN CHANGE:** Set to 50% of the viewport height */
+    overflow-y: auto;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1px;
+}
+
+/* Styles for individual table rows within the scrollable body */
+.table-row {
+    display: grid;
+    /* Adjusted: Added a 5th column for actions */
+    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 180px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--border-color);
+    font-size: 17px;
+    color: var(--text-color);
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+/* Specific styling for the status column, if needed */
+.table-row > div:nth-child(4) { /* This targets the 4th div which is the status */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+}
+
+/* New: Styling for the action buttons container */
+.action-buttons {
+    display: flex;
+    gap: 8px; /* Space between the update and delete buttons */
+    justify-content: center; /* Center the buttons within their column */
+    align-items: center;
+}
+
+/* New: Styling for the Update button */
+.update-button {
+    background-color: var(--primary-blue); /* Use your primary blue variable */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* New: Styling for the Delete button */
+.delete-button {
+    background-color: #dc3545; /* Red for delete */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Status Styling */
+.status-approved .icon {
+    color: var(--approved-green);
+    font-size: 1.2em;
+}
+.status-approved .text {
+    color: var(--approved-green);
+}
+
+.status-pending .icon {
+    color: var(--pending-yellow);
+    font-size: 1.2em;
+}
+.status-pending .text {
+    color: var(--pending-yellow);
+}
+
+/* New: Styling for rejected status */
+.status-rejected .icon {
+    color: var(--rejected-red);
+    font-size: 1.2em;
+}
+.status-rejected .text {
+    color: var(--rejected-red);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-content-box {
+        padding: 20px;
+        max-width: 100%;
+    }
+    .table-body-scrollable {
+        max-height: 40vh; /* Adjust for smaller screens (e.g., 40% of viewport height) */
+    }
+    .leave-history-title {
+        font-size: 24px;
+    }
+    .request-leave-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    .table-header, .table-row {
+        /* Adjusted: Removed a column for smaller screens, making it 4 columns */
+        grid-template-columns: 1fr 1fr 1.5fr 150px; /* e.g., Date, Type, Status, Actions */
+        font-size: 15px;
+    }
+    /* Hide the 'End Date' column on smaller screens for brevity */
+    .table-header > div:nth-child(2),
+    .table-row > div:nth-child(2) {
+        display: none;
+    }
+    .eleave-logo {
+        font-size: 38px;
+    }
+    .welcome-message {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content-box {
+        padding: 15px;
+    }
+    .table-body-scrollable {
+        max-height: 35vh; /* Further adjust for mobile (e.g., 35% of viewport height) */
+    }
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .request-leave-btn {
+        margin-top: 15px;
+        width: 100%;
+        text-align: center;
+    }
+    .table-header, .table-row {
+        /* Further simplify for very small screens, e.g., Date, Status, Actions */
+        grid-template-columns: 1fr 1fr 120px; /* Removed leave type for smallest screens */
+        font-size: 14px;
+        padding: 10px 0;
+    }
+    /* Hide 'Leave Type' column on smallest screens */
+    .table-header > div:nth-child(3),
+    .table-row > div:nth-child(3) {
+        display: none;
+    }
+    /* Ensure status column is visible and correctly targeted after hiding others */
+    .table-row > div:nth-child(4) { /* Original 4th div (Status) becomes 2nd visible */
+        display: flex; /* Keep as flex for icon and text */
+    }
+    /* Adjust grid template for header and row when more columns are hidden */
+    .table-header > div:nth-child(1), /* Start Date */
+    .table-header > div:nth-child(4), /* Status */
+    .table-header > div:nth-child(5) { /* Actions */
+        display: block; /* Ensure these are visible */
+    }
+    .table-row > div:nth-child(1), /* Start Date */
+    .table-row > div:nth-child(4), /* Status */
+    .table-row > div:nth-child(5) { /* Actions */
+        display: flex; /* Keep for alignment, assuming content is there */
+        align-items: center;
+        justify-content: center; /* Center content in these cells */
+    }
+}

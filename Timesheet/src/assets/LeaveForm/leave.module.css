@@ -1,0 +1,191 @@
+/* src/assets/LeaveForm/leave.module.css */
+
+.leave-request-container {
+    /* Define variables directly on this class */
+    --primary-blue: #007bff;
+    --header-logo-orange: #FFD832;
+    --header-logo-blue: #184198;
+    --form-bg-color: #f0f2f5;
+    --main-box-bg: #ffffff;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    --text-color: #333;
+    --label-color: #555;
+    --input-border: #ddd;
+    --input-focus-border: #007bff;
+    --light-text-color: #666;
+
+    /* Existing styles for the container */
+    width: 100%;
+    max-width: 700px;
+    padding: 25px;
+    box-sizing: border-box;
+    background-color: var(--main-box-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin: 20px auto;
+}
+
+.imageLogo {
+    width: 35%;
+    display: block;
+    margin: auto;
+}
+
+.eleave-logo {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+.eleave-logo::before {
+    color: var(--header-logo-orange);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-60px) translateY(-5px);
+    font-size: 0.8em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--label-color);
+    font-size: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-grid .form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Updated selectors to be specific to .form-inputs */
+.form-inputs input[type="text"],
+.form-inputs input[type="date"],
+.form-inputs select,
+.form-inputs textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    font-size: 16px;
+    color: var(--text-color);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Updated selectors for focus states */
+.form-inputs input[type="text"]:focus,
+.form-inputs input[type="date"]:focus,
+.form-inputs select:focus,
+.form-inputs textarea:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Updated selector for textarea */
+.form-inputs textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.file-upload-group {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.attach-file-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.attach-file-label:hover {
+    text-decoration: underline;
+}
+
+.attach-file-label .icon {
+    font-size: 1.4em;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.selected-file-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--light-text-color);
+}
+
+.submit-button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.submit-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 40px;
+    border: none;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .leave-request-container {
+        margin: 15px;
+        padding: 20px;
+    }
+    .eleave-logo {
+        font-size: 38px;
+        margin-bottom: 20px;
+    }
+    .eleave-logo::before {
+        transform: translateX(-50px) translateY(-5px);
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    /* Updated media query selectors for inputs */
+    .form-inputs input[type="text"],
+    .form-inputs input[type="date"],
+    .form-inputs select,
+    .form-inputs textarea {
+        padding: 8px 12px;
+        font-size: 15px;
+    }
+    .form-group label, .attach-file-label {
+        font-size: 15px;
+    }
+    .submit-btn {
+        padding: 10px 30px;
+        font-size: 16px;
+    }
+}
