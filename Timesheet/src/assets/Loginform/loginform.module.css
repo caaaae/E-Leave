@@ -1,45 +1,46 @@
-body{
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 95vh;
 }
 
+
 .disabled-div {
     pointer-events: none;
     opacity: 0.5;
 }
 
-.wrapper{
+.wrapper {
     width: 500px;
     color: black;
-}   
+}
 
-.wrapper img{
+.wrapper img {
     display: block;
     margin: auto;
     width: 50%;
 }
 
-.wrapper h1{
+.wrapper h1 {
     font-size: 50px;
     text-align: center;
 }
 
-.wrapper .input-box{
+.wrapper .input-box {
     position: relative;
     width: 89.5%;
     height: 50px;
     margin: 20px 0;
 }
 
-.input-box input{
+.input-box input {
     width: 100%;
     height: 100%;
     background: transparent;
     border: none;
     outline: none;
-    border: 2px solid rgba(24,65,152);
+    border: 2px solid rgba(24, 65, 152);
     border-radius: 15px;
     font-size: 18px;
     color: black;
@@ -47,12 +48,12 @@ body{
     padding-right: 20px;
 }
 
-.input-box input::placeholder{
+.input-box input::placeholder {
     font-size: 18px;
     color: grey;
 }
 
-.input-box .icon{
+.input-box .icon {
     position: absolute;
     left: 10px;
     top: 52%;
@@ -60,7 +61,7 @@ body{
     font-size: 16px;
 }
 
-.wrapper .forgot-password{
+.wrapper .forgot-password {
     display: flex;
     justify-content: right;
     align-items: right;
@@ -68,25 +69,25 @@ body{
     margin-bottom: 20px;
 }
 
-.forgot-password a{
+.forgot-password a {
     text-decoration: none;
 }
 
-.forgot-password a:hover{
+.forgot-password a:hover {
     text-decoration: underline;
 }
 
-.wrapper .login-button{
+.wrapper .login-button {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.wrapper .login-button button{
+.wrapper .login-button button {
     width: 80%;
     height: 45px;
-    background: rgba(24,65,152);
+    background: rgba(24, 65, 152);
     font-size: 18px;
     font-weight: bold;
     color: white;
@@ -95,19 +96,19 @@ body{
     border-radius: 15px;
 }
 
-.wrapper button:hover{
+.wrapper button:hover {
     color: #ffd832;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.wrapper .create-account{
+.wrapper .create-account {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.wrapper .create-account a{
-    display:flex;
+.wrapper .create-account a {
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 80%;
@@ -122,7 +123,34 @@ body{
     border-radius: 15px;
 }
 
-.wrapper .create-account a:hover{
-    color: rgba(24,65,152);
-    cursor:pointer;
+.wrapper .create-account a:hover {
+    color: rgba(24, 65, 152);
+    cursor: pointer;
+}
+
+/* Mobile (phones only: 0–767px) */
+@media (max-width: 600px) {
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    .wrapper .login-button button {
+        width: 50%;
+    }
+
+    .wrapper .create-account a {
+        width: 50%;
+    }
+
+    .input-box input {
+        width: 50%;
+        margin-left: 25%;
+    }
+
+    .wrapper .forgot-password {
+        justify-content: space-around;
+    }
+
 }

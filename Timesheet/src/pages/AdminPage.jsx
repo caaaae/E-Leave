@@ -3,6 +3,7 @@ import api from "../api";
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/AdminPage/adminpage.module.css';
 import EditLeaveModal from '../components/EditLeaveModal';
+import Swal from "sweetalert2";
 
 function Home() {
     const [leaveData, setLeaveData] = useState([]);
@@ -47,22 +48,32 @@ function Home() {
 
     // --- Handle Delete Operation ---
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this leave request? This action cannot be undone.')) {
-            try {
-                await api.delete(`/api/leaves/delete/${id}/`);
-                alert('Leave request deleted successfully!');
-                fetchLeaveData();
-            } catch (err) {
-                console.error('Error deleting leave request:', err.response?.data || err.message);
-                alert('Failed to delete leave request. Please try again.');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await api.delete(`/api/leaves/delete/${id}/`);
+                    Swal.fire("Deleted!", "Leave request deleted successfully.", "success");
+                    fetchLeaveData();
+                } catch (err) {
+                    console.error("Error deleting leave request:", err.response?.data || err.message);
+                    Swal.fire("Error!", "Failed to delete leave request. Please try again.", "error");
+                }
             }
-        }
+        });
     };
 
     // --- Handle Update Operation (Opens the modal) ---
     const handleUpdate = (leave) => {
         setCurrentLeaveToEdit(leave);
-        setIsModalOpen(true);        
+        setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
@@ -89,7 +100,7 @@ function Home() {
     return (
         <div className={classes['leave-history-container']}>
             <header className={classes['header-section']}>
-                <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"}/>
+                <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"} />
             </header>
 
             <div className={classes['main-content-box']}>
@@ -107,8 +118,12 @@ function Home() {
                     </div>
 
                     <div className={classes['table-body-scrollable']}>
-                        {leaveData.map((leave) => (
-                            <div className={classes['table-row']} key={leave.id}>
+                        {leaveData.map((leave, index) => (
+                            <div
+                                className={`${classes['table-row']} ${index % 2 === 0 ? classes['row-even'] : classes['row-odd']
+                                    }`}
+                                key={leave.id}
+                            >
                                 <div>{leave.start_date}</div>
                                 <div>{leave.end_date}</div>
                                 <div>{leave.leave_type}</div>
@@ -120,21 +135,25 @@ function Home() {
                                 </div>
                                 <div className={classes['action-buttons']}>
                                     <button
-                                        onClick={() => handleUpdate(leave)} 
+                                        onClick={() => handleUpdate(leave)}
                                         className={classes['update-button']}
                                     >
-                                        Update
+                                        <span className={classes['btn-text']}>Update</span>
+                                        <span className={classes['btn-icon']}>📝</span>
                                     </button>
+
                                     <button
                                         onClick={() => handleDelete(leave.id)}
                                         className={classes['delete-button']}
                                     >
-                                        Delete
+                                        <span className={classes['btn-text']}>Delete</span>
+                                        <span className={classes['btn-icon']}>🗑️</span>
                                     </button>
                                 </div>
                             </div>
                         ))}
                     </div>
+
                 </div>
             </div>
 

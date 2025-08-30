@@ -40,6 +40,7 @@
     text-align: center;
     width: 100%;
 }
+
 .eleave-logo::before {
     color: var(--header-logo-orange);
     position: absolute;
@@ -157,22 +158,49 @@
     transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
+.back-btn {
+    background-color: white;
+    color: var(--primary-blue);
+    padding: 12px 40px;
+    border: 2px solid var(--primary-blue);
+    margin-right: 12px;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.15);
+}
+
+.back-btn:hover {
+    background-color: var(--primary-blue);
+    color: white;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
     .leave-request-container {
-        margin: 15px;
-        padding: 20px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        height: 100%;
     }
+
     .eleave-logo {
         font-size: 38px;
         margin-bottom: 20px;
     }
+
     .eleave-logo::before {
         transform: translateX(-50px) translateY(-5px);
     }
+
     .form-grid {
-        grid-template-columns: 1fr;
         gap: 15px;
+        margin: 0;
     }
+
     /* Updated media query selectors for inputs */
     .form-inputs input[type="text"],
     .form-inputs input[type="date"],
@@ -181,9 +209,12 @@
         padding: 8px 12px;
         font-size: 15px;
     }
-    .form-group label, .attach-file-label {
+
+    .form-group label,
+    .attach-file-label {
         font-size: 15px;
     }
+
     .submit-btn {
         padding: 10px 30px;
         font-size: 16px;

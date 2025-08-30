@@ -7,6 +7,7 @@ import { FaLock, FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/Loginform/loginform.module.css';
+import Swal from "sweetalert2";
 
 function Form({ route, method }) {
     const [username, setUsername] = useState("");
@@ -21,32 +22,41 @@ function Form({ route, method }) {
 
     const name = method === "login" ? "Login" : "Register";
 
-    const handleSubmit = async (e) => {
-        setLoading(true);
-        e.preventDefault();
+const handleSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
 
-        try {
-            if (method === "login") {
-                const res = await api.post(route, { username, password });
-                localStorage.setItem(ACCESS_TOKEN, res.data.access);
-                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/");
-            } else {
-                const res = await api.post(route, { username, password, email, first_name, last_name });
-                navigate("/login");
-            }
-        } catch (error) {
-            if (method === "login") {
-                console.log("Error --> " + error);
-                alert("Incorrect Username or Password");
-            } else {
-                console.log("Error --> " + error);
-                alert("Username is existing");
-            }
-        } finally {
-            setLoading(false);
+    try {
+        if (method === "login") {
+            const res = await api.post(route, { username, password });
+            localStorage.setItem(ACCESS_TOKEN, res.data.access);
+            localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+            navigate("/");
+        } else {
+            const res = await api.post(route, { username, password, email, first_name, last_name });
+            navigate("/login");
         }
-    };
+    } catch (error) {
+        if (method === "login") {
+            console.log("Error --> " + error);
+            Swal.fire({
+                icon: "error",
+                title: "Login Failed",
+                text: "Incorrect Username or Password",
+            });
+        } else {
+            console.log("Error --> " + error);
+            Swal.fire({
+                icon: "error",
+                title: "Registration Failed",
+                text: "Username already exists",
+            });
+        }
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     return (
         <div className={classes.wrapper}>

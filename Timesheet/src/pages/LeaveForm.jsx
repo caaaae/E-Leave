@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/LeaveForm/leave.module.css'; // Import as a CSS Module
 import api from "../api";
+import Swal from "sweetalert2";
 
-function LeaveRequestForm (){
+function LeaveRequestForm() {
     // Removed the redundant formData state object and
     // will rely on individual state variables for form fields.
 
@@ -42,7 +43,7 @@ function LeaveRequestForm (){
             const day = match[2];
             const year = match[3];
             return `${year}-${month}-${day}`;
-        } 
+        }
         return dateString; // Return as is if format is not recognized
     };
 
@@ -63,13 +64,13 @@ function LeaveRequestForm (){
         formData.append("end_date", formattedEndDate);
         formData.append("reason_leave", reason_leave);
         formData.append("leave_status", leave_status);
-        
+
         if (supporting_doc) {
             formData.append("supporting_doc", supporting_doc);
         } else {
             console.log("No file selected for supporting_doc");
         }
-        
+
         try {
             const res = await api.post("/api/createleaves/", formData, {
                 headers: {
@@ -78,21 +79,32 @@ function LeaveRequestForm (){
             });
 
             if (res.status >= 200 && res.status < 300) {
-                console.log('API Response:', res.data);
-                alert('Leave request submitted successfully!');
-                setEmployeeName('');
-                setEmployeeID('');
-                setEmail('');
-                setDepartment('Computer Science');
-                setLeaveType('');
-                setStartDate('');
-                setEndDate('');
-                setReasonLeave('');
+                console.log("API Response:", res.data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Leave request submitted successfully!",
+                    confirmButtonColor: "#3085d6"
+                });
+
+                setEmployeeName("");
+                setEmployeeID("");
+                setEmail("");
+                setDepartment("Computer Science");
+                setLeaveType("");
+                setStartDate("");
+                setEndDate("");
+                setReasonLeave("");
                 setSelectedFile(null);
-                setLeaveStatus('Pending');
+                setLeaveStatus("Pending");
             } else {
-                console.error('API Error:', res.status, res.data);
-                alert(`Failed to submit leave request: ${res.data.message || 'Server error'}`);
+                console.error("API Error:", res.status, res.data);
+                Swal.fire({
+                    icon: "error",
+                    title: "Submission Failed",
+                    text: res.data.message || "Server error",
+                    confirmButtonColor: "#d33"
+                });
             }
 
         } catch (error) {
@@ -101,13 +113,31 @@ function LeaveRequestForm (){
                 console.error('Error Response Data:', error.response.data);
                 console.error('Error Response Status:', error.response.status);
                 console.error('Error Response Headers:', error.response.headers);
-                alert(`Failed to submit leave request: ${error.response.data.message || 'Server error'}`);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Request Failed',
+                    text: error.response.data.message || 'Server error',
+                    confirmButtonColor: '#d33',
+                });
             } else if (error.request) {
                 console.error('Error Request:', error.request);
-                alert('No response received from the server. Please check your network connection.');
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Response',
+                    text: 'No response received from the server. Please check your network connection.',
+                    confirmButtonColor: '#f39c12',
+                });
             } else {
                 console.error('Error Message:', error.message);
-                alert('An unexpected error occurred. Please try again.');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error',
+                    text: 'An unexpected error occurred. Please try again.',
+                    confirmButtonColor: '#d33',
+                });
             }
         } finally {
             setLoading(false);
@@ -117,7 +147,7 @@ function LeaveRequestForm (){
     return (
         <div className={classes['leave-request-container']}>
             <header className={classes['eleave-logo']}>
-                <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"}/>
+                <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"} />
             </header>
 
             <form onSubmit={handleSubmit} className={classes['form-inputs']}>
@@ -130,6 +160,7 @@ function LeaveRequestForm (){
                             name="employeeName"
                             value={employee_name}
                             onChange={(e) => setEmployeeName(e.target.value)}
+                            placeholder="e.g. Maria Santos"
                             required
                         />
                     </div>
@@ -141,6 +172,7 @@ function LeaveRequestForm (){
                             name="employeeId"
                             value={employee_id}
                             onChange={(e) => setEmployeeID(e.target.value)}
+                            placeholder="ABC123456"
                             required
                         />
                     </div>
@@ -154,6 +186,7 @@ function LeaveRequestForm (){
                         name="employeeEmail"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        placeholder="name@company.com"
                         required
                     />
                 </div>
@@ -184,6 +217,7 @@ function LeaveRequestForm (){
                             name="startDate"
                             value={start_date}
                             onChange={(e) => setStartDate(e.target.value)}
+                            min={new Date().toISOString().split("T")[0]}
                             required
                         />
                     </div>
@@ -195,21 +229,29 @@ function LeaveRequestForm (){
                             name="endDate"
                             value={end_date}
                             onChange={(e) => setEndDate(e.target.value)}
+                            min={start_date || new Date().toISOString().split("T")[0]}  
                             required
                         />
                     </div>
                 </div>
-
                 <div className={classes['form-group']}>
                     <label htmlFor="leaveType">Leave Type</label>
-                    <input
-                        type="text"
+                    <select
                         id="leaveType"
                         name="leaveType"
                         value={leave_type}
                         onChange={(e) => setLeaveType(e.target.value)}
                         required
-                    />
+                    >
+                        <option value="">Select Type</option>
+                        <option value="Annual Leave">Vacation Leave</option>
+                        <option value="Annual Leave">Annual Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Maternity Leave">Maternity Leave</option>
+                        <option value="Paternity Leave">Paternity Leave</option>
+                        <option value="Unpaid Leave">Unpaid Leave</option>
+                    </select>
+
                 </div>
 
                 <div className={classes['form-group']}>
@@ -220,6 +262,7 @@ function LeaveRequestForm (){
                         value={reason_leave}
                         onChange={(e) => setReasonLeave(e.target.value)}
                         rows="5"
+                        placeholder="Enter reason for leave"
                         required
                     ></textarea>
                 </div>
@@ -245,7 +288,12 @@ function LeaveRequestForm (){
                 </div>
 
                 <div className={classes['submit-button-container']}>
-                    <button type="submit" className={classes['submit-btn']} disabled={loading}>
+                    <a href="/" className={classes['back-btn']}>Back</a>
+                    <button
+                        type="submit"
+                        className={classes['submit-btn']}
+                        disabled={loading}
+                    >
                         {loading ? 'Submitting...' : 'Submit'}
                     </button>
                 </div>

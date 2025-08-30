@@ -4,7 +4,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
   font-family: "League Spartan", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
@@ -14,4 +13,19 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Add background image to the body */
+html,
+body {
+  padding: 0;
+  height: 100%;
+  /* ensures full viewport height */
+  overflow-x: hidden;
+  background-image: url('./assets/Loginform/bgImage-2.png');
+  background-size: cover;
+  /* scales to fill */
+  background-position: center;
+  /* keeps it centered */
+  background-repeat: no-repeat;
 }
