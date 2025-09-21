@@ -1,11 +1,12 @@
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from .serializers import UserSerializer, LeaveSerializer, GetUsernameSerializer, GetLeaveDetails, GetAllLeaveDetails
 from rest_framework.permissions import IsAuthenticated, AllowAny 
 from .models import LeaveDetails
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # For creating leave
 class LeaveCreateView(generics.CreateAPIView):

@@ -1,36 +1,99 @@
+/* --- Root Variables --- */
 :root {
     --primary-blue: #007bff;
-    /* For the button */
 }
 
+/* --- Common Global Styles --- */
 .imageLogo {
-    width: 35%;
+    width: 150px;
+    margin-left: 40px;
+    margin-right: 20px;
 }
 
 /* --- Header Section --- */
 .header-section {
-    text-align: center;
-    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    /* padding-left: 15px; */
+    padding-right: 50px;
+    padding-bottom: 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #dcdcdc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.left-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logout-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    margin-right: 40px;
+}
+
+.create-account {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-account a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 45px;
+    text-decoration: none;
+    background-color: #ffd832;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+}
+
+.create-account {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    margin-right: 40px;
+}
+
+.logout-btn:hover {
+    background-color: #0056b3;
 }
 
 .welcome-message {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: 500;
     color: var(--text-color);
-    margin-top: 10px;
-}
-
-.leave-history-container3 {
-    position: fixed;
-    /* stays in place even when scrolling */
-    top: 10px;
-    /* distance from top */
-    right: 10px;
-    /* distance from right */
-    color: white;
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
+    margin-top: 20px;
 }
 
 /* --- Main Content Box --- */
@@ -89,10 +152,11 @@
 
 .table-header {
     display: grid;
-    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr;
+    /* Adjusted: Added a 5th column for actions (e.g., 180px wide) */
+    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 180px;
     /* Adjust column widths as needed */
     align-items: center;
-    padding: 15px 10px;
+    padding: 15px 0;
     border-bottom: 2px solid #ccc;
     margin-bottom: 12px;
     font-weight: 600;
@@ -112,9 +176,10 @@
 /* Styles for individual table rows within the scrollable body */
 .table-row {
     display: grid;
-    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr;
+    /* Adjusted: Added a 5th column for actions */
+    grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 180px;
     align-items: center;
-    padding: 14px 10px;
+    padding: 14px 0;
     border-bottom: 1px dashed var(--border-color);
     font-size: 17px;
     color: var(--text-color);
@@ -124,11 +189,59 @@
     border-bottom: none;
 }
 
-.table-row>div:last-child {
+/* Specific styling for the status column, if needed */
+.table-row>div:nth-child(4) {
+    /* This targets the 4th div which is the status */
     display: flex;
     align-items: center;
     gap: 8px;
     /* Space between icon and text */
+}
+
+/* New: Styling for the action buttons container */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    /* Space between the update and delete buttons */
+    justify-content: center;
+    /* Center the buttons within their column */
+    align-items: center;
+}
+
+/* New: Styling for the Update button */
+.update-button {
+    background-color: var(--primary-blue);
+    /* Use your primary blue variable */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+/* New: Styling for the Delete button */
+.delete-button {
+    background-color: #dc3545;
+    /* Red for delete */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+    /* Darker red on hover */
 }
 
 /* Status Styling */
@@ -149,6 +262,17 @@
 .status-pending .text {
     color: var(--pending-yellow);
 }
+
+/* New: Styling for rejected status */
+.status-rejected .icon {
+    color: var(--rejected-red);
+    font-size: 1.2em;
+}
+
+.status-rejected .text {
+    color: var(--rejected-red);
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -173,9 +297,16 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 1fr 1fr 1fr 0.4fr;
-        /* Adjust columns for smaller screens */
+        /* Adjusted: Removed a column for smaller screens, making it 4 columns */
+        grid-template-columns: 1fr 1fr 1.5fr 150px;
+        /* e.g., Date, Type, Status, Actions */
         font-size: 15px;
+    }
+
+    /* Hide the 'End Date' column on smaller screens for brevity */
+    .table-header>div:nth-child(2),
+    .table-row>div:nth-child(2) {
+        display: none;
     }
 
     .eleave-logo {
@@ -210,30 +341,36 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 1fr 1fr 1fr 0.4fr;
-        /* Further simplify columns */
+        /* Further simplify for very small screens, e.g., Date, Status, Actions */
+        grid-template-columns: 1fr 1fr 120px;
+        /* Removed leave type for smallest screens */
         font-size: 14px;
         padding: 10px 0;
     }
-}
 
-.logout-btn {
-    margin-left: auto;
-    background-color: white;
-    color: var(--primary-blue);
-    padding: 8px 20px;
-    border: 2px solid var(--primary-blue);
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
+    /* Hide 'Leave Type' column on smallest screens */
+    .table-header>div:nth-child(3),
+    .table-row>div:nth-child(3) {
+        display: none;
+    }
 
-.logout-btn:hover {
-    background-color: var(--primary-blue);
-    color: white;
-    transform: translateY(-2px);
+    /* Ensure status column is visible and correctly targeted after hiding others */
+    .table-row>div:nth-child(4) {
+        /* Original 4th div (Status) becomes 2nd visible */
+        display: flex;
+        /* Keep as flex for icon and text */
+    }
+
+    /* Adjust grid template for header and row when more columns are hidden */
+    .table-header>div:nth-child(1),
+    /* Start Date */
+    .table-header>div:nth-child(4),
+    /* Status */
+    .table-header>div:nth-child(5) {
+        /* Actions */
+        display: block;
+        /* Ensure these are visible */
+    }
 }
 
 .row-even {
@@ -244,29 +381,75 @@
     background-color: #ffffff;
 }
 
+/* Desktop: show text, hide icons */
+.btn-icon {
+    display: none;
+}
+
 /* Mobile (phones only: 0–767px) */
 @media (max-width: 600px) {
 
     /* --- Main Content Box --- */
     .main-content-box {
-        width: 87%;
-        margin: 10px;
+        background-color: #f5f5f5;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin: 7px;
+        width: 100%;
+        max-width: 89%;
+        box-shadow: 0 0 5px rgba(0, 0, 0, .05), 2px 2px 5px rgba(0, 0, 0, .1);
+        position: relative;
     }
 
-    .status-approved .text {
-        color: var(--approved-green);
+    /* --- Leave History Table --- */
+    .leave-table {
+        margin-top: 25px;
+    }
+
+
+    /* New: Styling for the Update button */
+    .update-button {
+        background-color: var(--primary-blue);
+        /* Use your primary blue variable */
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .update-button:hover {
+        background-color: #0056b3;
+        /* Darker blue on hover */
+    }
+
+    /* New: Styling for the Delete button */
+    .delete-button {
+        background-color: #dc3545;
+        /* Red for delete */
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover {
+        background-color: #c82333;
+        /* Darker red on hover */
+    }
+
+    .btn-text {
         display: none;
     }
 
-    .status-pending .text {
-        color: var(--pending-yellow);
-        display: none;
+    .btn-icon {
+        display: inline-block;
+        font-size: 1.2em;
+        /* Adjust size */
     }
-
-    .status-rejected .text {
-        color: var(--pending-yellow);
-        display: none;
-    }
-
-
 }

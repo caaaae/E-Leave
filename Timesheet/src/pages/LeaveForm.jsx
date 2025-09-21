@@ -1,5 +1,5 @@
 // LeaveRequestForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/LeaveForm/leave.module.css'; // Import as a CSS Module
 import api from "../api";
@@ -8,7 +8,6 @@ import Swal from "sweetalert2";
 function LeaveRequestForm() {
     // Removed the redundant formData state object and
     // will rely on individual state variables for form fields.
-
     const [employee_name, setEmployeeName] = useState("");
     const [employee_id, setEmployeeID] = useState("");
     const [email, setEmail] = useState("");
@@ -25,6 +24,27 @@ function LeaveRequestForm() {
         const file = e.target.files[0];
         setSelectedFile(file);
     };
+
+    //fetch function
+    const fetchUserDataAndLeaveData = async () => {
+        try {
+            // Fetch user data
+            const userResponse = await api.get('/api/users/');
+            const firstName = userResponse.data.first_name;
+            const lastName = userResponse.data.last_name;
+
+            setEmployeeName(firstName + " " +lastName);
+            setEmployeeID(userResponse.data.employee_id);
+            setEmail(userResponse.data.email);
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserDataAndLeaveData();
+    }, []);
 
     // This function might not be strictly necessary if input type="date"
     // is always used and provides YYYY-MM-DD.
@@ -155,6 +175,7 @@ function LeaveRequestForm() {
                     <div className={classes['form-group']}>
                         <label htmlFor="employeeName">Full Name</label>
                         <input
+                            disabled
                             type="text"
                             id="employeeName"
                             name="employeeName"
@@ -167,6 +188,7 @@ function LeaveRequestForm() {
                     <div className={classes['form-group']}>
                         <label htmlFor="employeeId">Employee ID</label>
                         <input
+                            disabled
                             type="text"
                             id="employeeId"
                             name="employeeId"
@@ -181,6 +203,7 @@ function LeaveRequestForm() {
                 <div className={classes['form-group']}>
                     <label htmlFor="employeeEmail">Employee Email</label>
                     <input
+                        disabled
                         type="text"
                         id="employeeEmail"
                         name="employeeEmail"
