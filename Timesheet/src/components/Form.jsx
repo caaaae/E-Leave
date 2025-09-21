@@ -5,6 +5,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import LoadingIndicator from "./LoadingIndicator";
 import { FaLock, FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/Loginform/loginform.module.css';
 import Swal from "sweetalert2";
@@ -13,6 +14,7 @@ function Form({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [employee_id, setEmployeeID] = useState("");
     const [first_name, setFirstName] = useState("");
     const [last_name, setLastName] = useState("");
     const [loading, setLoading] = useState(false);
@@ -27,13 +29,38 @@ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+        var isSuperUser = false;
         if (method === "login") {
             const res = await api.post(route, { username, password });
             localStorage.setItem(ACCESS_TOKEN, res.data.access);
             localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-            navigate("/");
+
+            const token = localStorage.getItem(ACCESS_TOKEN);
+
+            try {
+                console.log("JWT token --->", token)
+                const decoded = jwtDecode(token);
+                const tokenExpiration = decoded.exp;
+                const now = Date.now() / 1000;
+            
+                if (tokenExpiration < now) {
+                    await refreshToken();
+                } else {
+                    isSuperUser = (decoded.is_superuser);
+                }
+            } catch (error) {
+                console.error("JWT decoding failed:", error);
+            }
+            //if admin
+            if(isSuperUser){
+                navigate("/admin");
+            }
+            else{
+                navigate("/");
+            }
+
         } else {
-            const res = await api.post(route, { username, password, email, first_name, last_name });
+            const res = await api.post(route, { username, password, email, first_name, last_name, employee_id });
             navigate("/login");
         }
     } catch (error) {
@@ -69,7 +96,7 @@ const handleSubmit = async (e) => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder='username'
+                        placeholder='Username'
                         required
                     />
                     <FaUser className={classes.icon}/>
@@ -113,6 +140,19 @@ const handleSubmit = async (e) => {
                         <MdEmail className={classes.icon}/>
                     </div>
                 )}
+                {currentPath === '/register' && (
+                    <div className={classes['input-box']}>
+                        <input
+                            className={classes['form-input']}
+                            type="text"
+                            value={employee_id}
+                            onChange={(e) => setEmployeeID(e.target.value)}
+                            placeholder="EmployeeID"
+                            required
+                        />
+                        <MdEmail className={classes.icon}/>
+                    </div>
+                )}
                 <div className={classes['input-box']}>
                     <input
                         className={classes['form-input']}
@@ -124,25 +164,10 @@ const handleSubmit = async (e) => {
                     />
                     <FaLock className={classes.icon}/>
                 </div>
-                {currentPath !== '/register' && (
-                    <div className={classes['forgot-password']}>
-                        <a href="#">Forgot password?</a>
-                    </div>
-                )}
                 <div className={classes['login-button']}>
                     {loading && <LoadingIndicator />}
                     <button className={classes['form-button']} type="submit">{name.toUpperCase()}</button>
                 </div>
-                {currentPath !== '/register' && (
-                    <div className={classes['create-account']}>
-                        <a href="/register">CREATE NEW ACCOUNT</a>
-                    </div>
-                )}
-                {currentPath === '/register' && (
-                    <div className={classes['create-account']}>
-                        <a href="/login">GO TO LOGIN</a>
-                    </div>
-                )}
             </form>
         </div>
     );

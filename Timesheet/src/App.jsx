@@ -1,4 +1,3 @@
-import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -15,7 +14,6 @@ function Logout() {
 }
 
 function RegisterAndLogout() {
-  localStorage.clear()
   return <Register />
 }
 
@@ -33,14 +31,18 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/register" element={
+          <ProtectedRoute requiredSuperuser={true}>
+            <RegisterAndLogout />
+          </ProtectedRoute>
+          } />
         <Route path="/applyLeave" element={
           <ProtectedRoute>
               <LeaveForm />
             </ProtectedRoute>
           } />
-        <Route path="/admin11111" element={
-          <ProtectedRoute>
+        <Route path="/admin" element={
+          <ProtectedRoute requiredSuperuser={true}>
             <AdminForm />
           </ProtectedRoute>
         } />

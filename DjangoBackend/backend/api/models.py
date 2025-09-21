@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 class LeaveDetails(models.Model):
     employee_name = models.CharField(max_length=100)
     employee_id = models.CharField(max_length=100)
-    username = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leaves")
+    username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="leaves")
     email = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     leave_type = models.CharField(max_length=100)

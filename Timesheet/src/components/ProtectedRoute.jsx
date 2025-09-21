@@ -5,8 +5,9 @@ import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react";
 
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, requiredSuperuser = false }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [isSuperuser, setIsSuperuser] = useState(false);
 
     useEffect(() => {
         auth().catch(() => setIsAuthorized(false))
@@ -36,14 +37,21 @@ function ProtectedRoute({ children }) {
             setIsAuthorized(false);
             return;
         }
-        const decoded = jwtDecode(token);
-        const tokenExpiration = decoded.exp;
-        const now = Date.now() / 1000;
 
-        if (tokenExpiration < now) {
-            await refreshToken();
-        } else {
-            setIsAuthorized(true);
+        try {
+            const decoded = jwtDecode(token);
+            const tokenExpiration = decoded.exp;
+            const now = Date.now() / 1000;
+
+            if (tokenExpiration < now) {
+                await refreshToken();
+            } else {
+                setIsSuperuser(decoded.is_superuser);
+                setIsAuthorized(true);
+            }
+        } catch (error) {
+            console.error("JWT decoding failed:", error);
+            setIsAuthorized(false);
         }
     };
 
@@ -51,7 +59,15 @@ function ProtectedRoute({ children }) {
         return <div>Loading...</div>;
     }
 
-    return isAuthorized ? children : <Navigate to="/login" />;
+    if (!isAuthorized) {
+        return <Navigate to="/login" />;
+    }
+
+    if (requiredSuperuser && !isSuperuser) {
+        return <Navigate to="/admin" />;
+    }
+    
+    return children;
 }
 
 export default ProtectedRoute;

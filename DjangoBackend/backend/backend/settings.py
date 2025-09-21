@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "api",
+    "accounts",
     "rest_framework",
     "corsheaders",
 ]
@@ -151,3 +152,5 @@ CORS_ALLOWS_CREDENTIALS = True
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+AUTH_USER_MODEL = 'accounts.CustomUser' 

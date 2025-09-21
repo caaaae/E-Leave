@@ -1,18 +1,94 @@
+/* --- Common Global Styles --- */
 .imageLogo {
-    width: 35%;
+    width: 150px;
+    margin-left: 40px;
+    margin-right: 20px;
 }
 
 /* --- Header Section --- */
 .header-section {
-    text-align: center;
-    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    /* padding-left: 15px; */
+    padding-right: 50px;
+    padding-bottom: 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #dcdcdc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.left-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logout-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    margin-right: 40px;
+}
+
+.create-account {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-account a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 45px;
+    text-decoration: none;
+    background-color: #ffd832;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+}
+
+.create-account {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    margin-right: 40px;
+}
+
+.logout-btn:hover {
+    background-color: #0056b3;
 }
 
 .welcome-message {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: 500;
     color: var(--text-color);
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 /* --- Main Content Box --- */
