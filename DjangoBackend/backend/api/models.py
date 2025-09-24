@@ -6,6 +6,7 @@ class LeaveDetails(models.Model):
     employee_name = models.CharField(max_length=100)
     employee_id = models.CharField(max_length=100)
     username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="leaves")
+    phoneNumber = models.CharField(max_length=20, default='0000-000-0000') 
     email = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     leave_type = models.CharField(max_length=100)

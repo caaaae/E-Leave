@@ -104,10 +104,6 @@ function Home() {
         return <div className={`${classes.message} ${classes.error}`}>{error}</div>;
     }
 
-    if (leaveData.length === 0) {
-        return <div className={classes.message}>No leave requests found.</div>;
-    }
-
     return (
         <div className={classes['leave-history-container']}>
             <header className={classes['header-section']}>

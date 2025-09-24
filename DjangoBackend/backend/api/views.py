@@ -21,21 +21,23 @@ class LeaveCreateView(generics.CreateAPIView):
 
 # For deleting leave
 class LeaveDeleteView(generics.DestroyAPIView):
+    queryset = LeaveDetails.objects.all()
     serializer_class = LeaveSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return LeaveDetails.objects.filter(username=user)
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     return LeaveDetails.objects.filter(username=user)
 
 # For Updating leave
 class LeaveUpdateView(generics.UpdateAPIView):
+    queryset = LeaveDetails.objects.all()
     serializer_class = LeaveSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return LeaveDetails.objects.filter(username=user)
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     return LeaveDetails.objects.filter(username=user)
     
 # For creating user    
 class CreateUserView(generics.CreateAPIView):

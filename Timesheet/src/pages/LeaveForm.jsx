@@ -1,164 +1,166 @@
-// LeaveRequestForm.jsx
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import loginImage from '../assets/Loginform/loginimage.png';
-import classes from '../assets/LeaveForm/leave.module.css'; // Import as a CSS Module
+import classes from '../assets/LeaveForm/leave.module.css';
 import api from "../api";
 import Swal from "sweetalert2";
 
+const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+    return debouncedValue;
+};
+
 function LeaveRequestForm() {
-    // Removed the redundant formData state object and
-    // will rely on individual state variables for form fields.
-    const [employee_name, setEmployeeName] = useState("");
-    const [employee_id, setEmployeeID] = useState("");
-    const [email, setEmail] = useState("");
-    const [department, setDepartment] = useState("Computer Science"); // Set a default value
-    const [leave_type, setLeaveType] = useState("");
-    const [start_date, setStartDate] = useState("");
-    const [end_date, setEndDate] = useState("");
-    const [reason_leave, setReasonLeave] = useState("");
-    const [leave_status, setLeaveStatus] = useState("Pending");
-    const [supporting_doc, setSelectedFile] = useState(null);
-    const [loading, setLoading] = useState(false); // Added loading state
+    const [formData, setFormData] = useState(() => {
+        const savedDraft = localStorage.getItem('leaveFormDraft');
+        if (savedDraft) {
+            return JSON.parse(savedDraft);
+        }
+        return {
+            employee_name: "",
+            employee_id: "",
+            email: "",
+            phoneNumber: "",
+            department: "Computer Science",
+            leave_type: "",
+            start_date: "",
+            end_date: "",
+            reason_leave: "",
+            leave_status: "Pending",
+        };
+    });
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setSelectedFile(file);
-    };
+    const [supporting_doc, setSelectedFile] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [saveStatus, setSaveStatus] = useState('');
+    const [isEdited, setIsEdited] = useState(false); 
 
-    //fetch function
-    const fetchUserDataAndLeaveData = async () => {
+    const debouncedFormData = useDebounce(formData, 1000);
+
+    useEffect(() => {
+        if (isEdited) {
+            setSaveStatus('Saving...');
+            try {
+                const dataToSave = { ...debouncedFormData };
+                delete dataToSave.supporting_doc;
+                localStorage.setItem('leaveFormDraft', JSON.stringify(dataToSave));
+                setSaveStatus('Draft saved automatically! ✅');
+            } catch (error) {
+                console.error("Failed to save to local storage", error);
+                setSaveStatus('Save failed!');
+            }
+        }
+    }, [debouncedFormData, isEdited]);
+    
+    const fetchUserDataAndLeaveData = useCallback(async () => {
         try {
-            // Fetch user data
             const userResponse = await api.get('/api/users/');
-            const firstName = userResponse.data.first_name;
-            const lastName = userResponse.data.last_name;
-
-            setEmployeeName(firstName + " " +lastName);
-            setEmployeeID(userResponse.data.employee_id);
-            setEmail(userResponse.data.email);
-
+            const user = userResponse.data;
+            setFormData(prevData => ({
+                ...prevData,
+                employee_name: `${user.first_name} ${user.last_name}`,
+                employee_id: user.employee_id,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+            }));
         } catch (err) {
             console.error('Error fetching data:', err);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchUserDataAndLeaveData();
-    }, []);
+    }, [fetchUserDataAndLeaveData]);
+    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
+        setIsEdited(true); 
+    };
 
-    // This function might not be strictly necessary if input type="date"
-    // is always used and provides YYYY-MM-DD.
-    // However, it's kept for robustness in case date input varies.
+    const handleFileChange = (e) => {
+        const newFiles = Array.from(e.target.files);
+        setSelectedFile(prevFiles => [...prevFiles, ...newFiles]);
+        setIsEdited(true); 
+    };
+
     const convertDateToYYYYMMDD = (dateString) => {
-        // Check if the dateString is already in YYYY-MM-DD format (from type="date" input)
         if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
             return dateString;
         }
-        // If it's MM/DD/YYYY, convert it
         const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
         const match = dateString.match(dateRegex);
-
         if (match) {
             const month = match[1];
             const day = match[2];
             const year = match[3];
             return `${year}-${month}-${day}`;
         }
-        return dateString; // Return as is if format is not recognized
+        return dateString;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        let formattedStartDate = convertDateToYYYYMMDD(start_date);
-        let formattedEndDate = convertDateToYYYYMMDD(end_date);
+        const formattedStartDate = convertDateToYYYYMMDD(formData.start_date);
+        const formattedEndDate = convertDateToYYYYMMDD(formData.end_date);
 
-        const formData = new FormData();
-        formData.append("employee_name", employee_name);
-        formData.append("employee_id", employee_id);
-        formData.append("email", email);
-        formData.append("department", department);
-        formData.append("leave_type", leave_type);
-        formData.append("start_date", formattedStartDate);
-        formData.append("end_date", formattedEndDate);
-        formData.append("reason_leave", reason_leave);
-        formData.append("leave_status", leave_status);
+        const formToSend = new FormData();
+        for (const key in formData) {
+            formToSend.append(key, formData[key]);
+        }
+        formToSend.set("start_date", formattedStartDate);
+        formToSend.set("end_date", formattedEndDate);
 
-        if (supporting_doc) {
-            formData.append("supporting_doc", supporting_doc);
+        if (supporting_doc && supporting_doc.length > 0) {
+            supporting_doc.forEach((file) => {
+                formToSend.append(`supporting_doc`, file);
+            });
         } else {
-            console.log("No file selected for supporting_doc");
+            console.log("No files selected for supporting_doc");
         }
 
         try {
-            const res = await api.post("/api/createleaves/", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            const res = await api.post("/api/createleaves/", formToSend, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
 
             if (res.status >= 200 && res.status < 300) {
-                console.log("API Response:", res.data);
                 Swal.fire({
                     icon: "success",
                     title: "Success",
                     text: "Leave request submitted successfully!",
-                    confirmButtonColor: "#3085d6"
                 });
-
-                setEmployeeName("");
-                setEmployeeID("");
-                setEmail("");
-                setDepartment("Computer Science");
-                setLeaveType("");
-                setStartDate("");
-                setEndDate("");
-                setReasonLeave("");
-                setSelectedFile(null);
-                setLeaveStatus("Pending");
+                localStorage.removeItem('leaveFormDraft');
+                setFormData(prevData => ({
+                    ...prevData,
+                    department: "Computer Science", 
+                    leave_type: "", 
+                    start_date: "",
+                    end_date: "", 
+                    reason_leave: "", 
+                    leave_status: "Pending"
+                }));
+                setSelectedFile([]);
+                setSaveStatus('');
             } else {
-                console.error("API Error:", res.status, res.data);
                 Swal.fire({
-                    icon: "error",
-                    title: "Submission Failed",
-                    text: res.data.message || "Server error",
-                    confirmButtonColor: "#d33"
+                    icon: "error", title: "Submission Failed", text: res.data.message || "Server error",
                 });
             }
-
         } catch (error) {
             console.error('Network or API Error:', error);
-            if (error.response) {
-                console.error('Error Response Data:', error.response.data);
-                console.error('Error Response Status:', error.response.status);
-                console.error('Error Response Headers:', error.response.headers);
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Request Failed',
-                    text: error.response.data.message || 'Server error',
-                    confirmButtonColor: '#d33',
-                });
-            } else if (error.request) {
-                console.error('Error Request:', error.request);
-
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No Response',
-                    text: 'No response received from the server. Please check your network connection.',
-                    confirmButtonColor: '#f39c12',
-                });
-            } else {
-                console.error('Error Message:', error.message);
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Unexpected Error',
-                    text: 'An unexpected error occurred. Please try again.',
-                    confirmButtonColor: '#d33',
-                });
-            }
         } finally {
             setLoading(false);
         }
@@ -169,8 +171,9 @@ function LeaveRequestForm() {
             <header className={classes['eleave-logo']}>
                 <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"} />
             </header>
-
+            
             <form onSubmit={handleSubmit} className={classes['form-inputs']}>
+                
                 <div className={classes['form-grid']}>
                     <div className={classes['form-group']}>
                         <label htmlFor="employeeName">Full Name</label>
@@ -178,10 +181,9 @@ function LeaveRequestForm() {
                             disabled
                             type="text"
                             id="employeeName"
-                            name="employeeName"
-                            value={employee_name}
-                            onChange={(e) => setEmployeeName(e.target.value)}
-                            placeholder="e.g. Maria Santos"
+                            name="employee_name"
+                            value={formData.employee_name}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -191,27 +193,37 @@ function LeaveRequestForm() {
                             disabled
                             type="text"
                             id="employeeId"
-                            name="employeeId"
-                            value={employee_id}
-                            onChange={(e) => setEmployeeID(e.target.value)}
-                            placeholder="ABC123456"
+                            name="employee_id"
+                            value={formData.employee_id}
+                            onChange={handleChange}
                             required
                         />
                     </div>
                 </div>
-
-                <div className={classes['form-group']}>
-                    <label htmlFor="employeeEmail">Employee Email</label>
-                    <input
-                        disabled
-                        type="text"
-                        id="employeeEmail"
-                        name="employeeEmail"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="name@company.com"
-                        required
-                    />
+                
+                <div className={classes['form-grid']}>
+                    <div className={classes['form-group']}>
+                        <label htmlFor="employeeEmail">Employee Email</label>
+                        <input
+                            disabled
+                            type="text"
+                            id="employeeEmail"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required/>
+                    </div>
+                    <div className={classes['form-group']}>
+                        <label htmlFor="phoneNumber">Phone Number</label>
+                        <input
+                            disabled
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            required/>
+                    </div>
                 </div>
 
                 <div className={classes['form-group']}>
@@ -219,8 +231,8 @@ function LeaveRequestForm() {
                     <select
                         id="department"
                         name="department"
-                        value={department}
-                        onChange={(e) => setDepartment(e.target.value)}
+                        value={formData.department}
+                        onChange={handleChange}
                         required
                     >
                         <option value="Computer Science">Computer Science</option>
@@ -237,9 +249,9 @@ function LeaveRequestForm() {
                         <input
                             type="date"
                             id="startDate"
-                            name="startDate"
-                            value={start_date}
-                            onChange={(e) => setStartDate(e.target.value)}
+                            name="start_date"
+                            value={formData.start_date}
+                            onChange={handleChange}
                             min={new Date().toISOString().split("T")[0]}
                             required
                         />
@@ -249,10 +261,10 @@ function LeaveRequestForm() {
                         <input
                             type="date"
                             id="endDate"
-                            name="endDate"
-                            value={end_date}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            min={start_date || new Date().toISOString().split("T")[0]}  
+                            name="end_date"
+                            value={formData.end_date}
+                            onChange={handleChange}
+                            min={formData.start_date || new Date().toISOString().split("T")[0]}
                             required
                         />
                     </div>
@@ -261,13 +273,13 @@ function LeaveRequestForm() {
                     <label htmlFor="leaveType">Leave Type</label>
                     <select
                         id="leaveType"
-                        name="leaveType"
-                        value={leave_type}
-                        onChange={(e) => setLeaveType(e.target.value)}
+                        name="leave_type"
+                        value={formData.leave_type}
+                        onChange={handleChange}
                         required
                     >
-                        <option value="">Select Type</option>
-                        <option value="Annual Leave">Vacation Leave</option>
+                        <option value="">Select a Leave Type</option>
+                        <option value="Vacation Leave">Vacation Leave</option>
                         <option value="Annual Leave">Annual Leave</option>
                         <option value="Sick Leave">Sick Leave</option>
                         <option value="Maternity Leave">Maternity Leave</option>
@@ -281,9 +293,9 @@ function LeaveRequestForm() {
                     <label htmlFor="reason">Reason for Leave</label>
                     <textarea
                         id="reason"
-                        name="reason"
-                        value={reason_leave}
-                        onChange={(e) => setReasonLeave(e.target.value)}
+                        name="reason_leave"
+                        value={formData.reason_leave}
+                        onChange={handleChange}
                         rows="5"
                         placeholder="Enter reason for leave"
                         required
@@ -295,17 +307,23 @@ function LeaveRequestForm() {
                     <input
                         type="file"
                         id="supportingDocuments"
-                        name="supportingDocuments"
+                        name="supporting_doc"
                         className={classes['file-input-hidden']}
                         onChange={handleFileChange}
+                        multiple 
                     />
                     <label htmlFor="supportingDocuments" className={classes['attach-file-label']}>
                         <span className={classes.icon}>&#128206;</span>
                         Attach File***
                     </label>
-                    {supporting_doc && ( // Corrected to use supporting_doc
-                        <div className={classes['selected-file-name']}>
-                            Selected: {supporting_doc.name}
+                    {supporting_doc.length > 0 && (
+                        <div className={classes['selected-file-list']}>
+                            <p>Selected Files:</p>
+                            <ul>
+                                {supporting_doc.map((file, index) => (
+                                    <li key={index}>{file.name}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
                 </div>
@@ -323,6 +341,6 @@ function LeaveRequestForm() {
             </form>
         </div>
     );
-};
+}
 
 export default LeaveRequestForm;

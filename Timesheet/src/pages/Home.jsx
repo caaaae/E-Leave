@@ -153,38 +153,45 @@ function Home() {
                         </div>
 
                         <div className={classes['table-body-scrollable']}>
-                            {leaveData.map((leave, index) => (
-                                <div
-                                    className={`${classes['table-row']} ${index % 2 === 0 ? classes['row-even'] : classes['row-odd']}`}
-                                    key={leave.id}
-                                >
-                                    <div>{leave.start_date}</div>
-                                    <div>{leave.end_date}</div>
-                                    <div>{leave.leave_type}</div>
-                                    <div className={getStatusClass(leave.leave_status)}>
-                                        <span className={classes.icon}>
-                                            {getStatusIcon(leave.leave_status)}
-                                        </span>
-                                        <span className={classes.text}>{leave.leave_status}</span>
+                            {leaveData.map((leave, index) => {
+                                // Define a variable to check if the buttons should be disabled
+                                const isFinal = leave.leave_status === 'Approved' || leave.leave_status === 'Rejected';
+
+                                return (
+                                    <div
+                                        className={`${classes['table-row']} ${index % 2 === 0 ? classes['row-even'] : classes['row-odd']}`}
+                                        key={leave.id}
+                                    >
+                                        <div>{leave.start_date}</div>
+                                        <div>{leave.end_date}</div>
+                                        <div>{leave.leave_type}</div>
+                                        <div className={getStatusClass(leave.leave_status)}>
+                                            <span className={classes.icon}>
+                                                {getStatusIcon(leave.leave_status)}
+                                            </span>
+                                            <span className={classes.text}>{leave.leave_status}</span>
+                                        </div>
+                                        <div className={classes['action-buttons']}>
+                                            <button
+                                                onClick={() => handleUpdate(leave)}
+                                                className={classes['update-button']}
+                                                disabled={isFinal} // Apply the disabled attribute
+                                            >
+                                                <span className={classes['btn-text']}>Update</span>
+                                                <span className={classes['btn-icon']}>📝</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(leave.id)}
+                                                className={classes['delete-button']}
+                                                disabled={isFinal} // Apply the disabled attribute
+                                            >
+                                                <span className={classes['btn-text']}>Delete</span>
+                                                <span className={classes['btn-icon']}>🗑️</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className={classes['action-buttons']}>
-                                        <button
-                                            onClick={() => handleUpdate(leave)}
-                                            className={classes['update-button']}
-                                        >
-                                            <span className={classes['btn-text']}>Update</span>
-                                            <span className={classes['btn-icon']}>📝</span>
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(leave.id)}
-                                            className={classes['delete-button']}
-                                        >
-                                            <span className={classes['btn-text']}>Delete</span>
-                                            <span className={classes['btn-icon']}>🗑️</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
