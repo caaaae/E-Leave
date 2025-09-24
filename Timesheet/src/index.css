@@ -22,7 +22,7 @@ body {
   height: 100%;
   /* ensures full viewport height */
   overflow-x: hidden;
-  background-image: url('./assets/Loginform/bgImage-2.png');
+  background-image: url('./assets/Loginform/bgImage.png');
   background-size: cover;
   /* scales to fill */
   background-position: center;

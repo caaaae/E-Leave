@@ -1,11 +1,11 @@
 
 import { useNavigate } from "react-router-dom";
-   import api from "../api";
-   import loginImage from '../assets/Loginform/loginimage.png';
-   import classes from '../assets/HomePage/homepage.module.css';
-   import EditLeaveModal from '../components/EditLeaveModalIndividual';
-   import Swal from "sweetalert2";
-   import { useState, useEffect } from "react";
+import api from "../api";
+import loginImage from '../assets/Loginform/loginimage.png';
+import classes from '../assets/HomePage/homepage.module.css';
+import EditLeaveModal from '../components/EditLeaveModalIndividual';
+import Swal from "sweetalert2";
+import { useState, useEffect } from "react";
 
 function Home() {
     const [firstname, setFirstName] = useState("");
@@ -156,21 +156,23 @@ function Home() {
     return (
         <div className={classes['leave-history-container2']}>
             <header className={classes['header-section']}>
-            {/* This is the first child, grouped on the left */}
-            <div className={classes['left-header-content']}>
-                <div className={classes['eleave-logo-section']}>
-                    <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"} />
+                {/* This is the first child, grouped on the left */}
+                <div className={classes['left-header-content']}>
+                    <div className={classes['eleave-logo-section']}>
+                        <img className={classes['imageLogo']} src={loginImage} alt={"loginImage"} />
+                    </div>
+                    <div className={classes['welcome-message']}>Welcome, {firstname + " " + lastname}!</div>
                 </div>
-                <div className={classes['welcome-message']}>Welcome, {firstname + " " + lastname}!</div>
-            </div>
-            {/* This is the second child, grouped on the right */}
+                {/* This is the second child, grouped on the right */}
                 <div className={classes['right-header-content']}>
                     <button className={classes['logout-btn']} onClick={handleLogout}>
-                    Logout
+                        <span className={classes['btn-text']}>Logout</span>
+                        <span className={classes['btn-icon']}>↩️</span>
                     </button>
                 </div>
+
             </header>
-            
+
             <div className={classes['leave-history-container']}>
                 <div className={classes['main-content-box']}>
                     <div className={classes['top-bar']}>
