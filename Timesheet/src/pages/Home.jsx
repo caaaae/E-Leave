@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import loginImage from '../assets/Loginform/loginimage.png';
-import classes from '../assets/HomePage/homepage.module.css';
-import EditLeaveModal from '../components/EditLeaveModalIndividual';
-import Swal from "sweetalert2";
+   import api from "../api";
+   import loginImage from '../assets/Loginform/loginimage.png';
+   import classes from '../assets/HomePage/homepage.module.css';
+   import EditLeaveModal from '../components/EditLeaveModalIndividual';
+   import Swal from "sweetalert2";
+   import { useState, useEffect } from "react";
 
 function Home() {
     const [firstname, setFirstName] = useState("");
@@ -16,7 +17,15 @@ function Home() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentLeaveToEdit, setCurrentLeaveToEdit] = useState(null);
 
-    const navigate = useNavigate();
+    // Chatbox states
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [messages, setMessages] = useState([
+        { id: 1, text: "Hello! How can I help you today?", sender: "bot" }
+    ]);
+    const [inputMessage, setInputMessage] = useState("");
+
+    // Note: navigation functions would need to be implemented in your actual app
+    const navigate = (path) => console.log(`Navigate to: ${path}`);
 
     // Combined fetch function
     const fetchUserDataAndLeaveData = async () => {
@@ -106,6 +115,34 @@ function Home() {
     const handleSaveSuccess = () => {
         // Re-fetch data after a successful save
         fetchUserDataAndLeaveData();
+    };
+
+    // Chatbox functions
+    const toggleChat = () => {
+        setIsChatOpen(!isChatOpen);
+    };
+
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        if (inputMessage.trim()) {
+            const newMessage = {
+                id: messages.length + 1,
+                text: inputMessage,
+                sender: "user"
+            };
+            setMessages([...messages, newMessage]);
+            setInputMessage("");
+
+            // Simulate bot response (you can replace this with actual API call)
+            setTimeout(() => {
+                const botResponse = {
+                    id: messages.length + 2,
+                    text: "Thank you for your message. Our support team will get back to you soon!",
+                    sender: "bot"
+                };
+                setMessages(prev => [...prev, botResponse]);
+            }, 1000);
+        }
     };
 
     if (loading) {
@@ -203,6 +240,213 @@ function Home() {
                     onSaveSuccess={handleSaveSuccess}
                 />
             )}
+
+            {/* Chatbox Widget */}
+            <div style={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                zIndex: 1000
+            }}>
+                {/* Chat Container */}
+                {isChatOpen && (
+                    <div style={{
+                        width: '350px',
+                        height: '450px',
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        marginBottom: '10px',
+                        overflow: 'hidden',
+                        animation: 'slideUp 0.3s ease-out'
+                    }}>
+                        {/* Chat Header */}
+                        <div style={{
+                            backgroundColor: '#4A90E2',
+                            color: 'white',
+                            padding: '15px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            borderRadius: '12px 12px 0 0'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{
+                                    width: '10px',
+                                    height: '10px',
+                                    backgroundColor: '#4FD82B',
+                                    borderRadius: '50%',
+                                    boxShadow: '0 0 5px #4FD82B'
+                                }}></div>
+                                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>Support Chat</span>
+                            </div>
+                            <button
+                                onClick={toggleChat}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'white',
+                                    fontSize: '20px',
+                                    cursor: 'pointer',
+                                    padding: '0',
+                                    width: '30px',
+                                    height: '30px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '4px',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Chat Messages Area */}
+                        <div style={{
+                            flex: 1,
+                            overflowY: 'auto',
+                            padding: '15px',
+                            backgroundColor: '#F8F9FA',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '10px'
+                        }}>
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start'
+                                    }}
+                                >
+                                    <div style={{
+                                        maxWidth: '70%',
+                                        padding: '10px 15px',
+                                        borderRadius: message.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                                        backgroundColor: message.sender === 'user' ? '#4A90E2' : '#E8E8E8',
+                                        color: message.sender === 'user' ? 'white' : '#333',
+                                        fontSize: '14px',
+                                        lineHeight: '1.4',
+                                        wordBreak: 'break-word'
+                                    }}>
+                                        {message.text}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Chat Input Area */}
+                        <form onSubmit={handleSendMessage} style={{
+                            padding: '15px',
+                            backgroundColor: 'white',
+                            borderTop: '1px solid #E0E0E0',
+                            display: 'flex',
+                            gap: '10px'
+                        }}>
+                            <input
+                                type="text"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                placeholder="Type your message..."
+                                style={{
+                                    flex: 1,
+                                    padding: '10px 15px',
+                                    borderRadius: '20px',
+                                    border: '1px solid #E0E0E0',
+                                    outline: 'none',
+                                    fontSize: '14px',
+                                    transition: 'border-color 0.2s'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#4A90E2'}
+                                onBlur={(e) => e.target.style.borderColor = '#E0E0E0'}
+                            />
+                            <button
+                                type="submit"
+                                style={{
+                                    backgroundColor: '#4A90E2',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '40px',
+                                    height: '40px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '18px',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#357ABD'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#4A90E2'}
+                            >
+                                →
+                            </button>
+                        </form>
+                    </div>
+                )}
+
+                {/* Chat Toggle Button */}
+                <button
+                    onClick={toggleChat}
+                    style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        backgroundColor: '#4A90E2',
+                        border: 'none',
+                        color: 'white',
+                        fontSize: '28px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(74, 144, 226, 0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'transform 0.2s, box-shadow 0.2s',
+                        animation: isChatOpen ? 'none' : 'pulse 2s infinite'
+                    }}
+                    onMouseEnter={(e) => {
+                        e.target.style.transform = 'scale(1.1)';
+                        e.target.style.boxShadow = '0 6px 16px rgba(74, 144, 226, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.boxShadow = '0 4px 12px rgba(74, 144, 226, 0.4)';
+                    }}
+                >
+                    {isChatOpen ? '✕' : '💬'}
+                </button>
+            </div>
+
+            {/* Add CSS animations */}
+            <style>{`
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes pulse {
+                    0% {
+                        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+                    }
+                    50% {
+                        box-shadow: 0 4px 20px rgba(74, 144, 226, 0.6);
+                    }
+                    100% {
+                        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+                    }
+                }
+            `}</style>
         </div >
     );
 }
