@@ -14,6 +14,7 @@ function Form({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [employee_id, setEmployeeID] = useState("");
     const [first_name, setFirstName] = useState("");
     const [last_name, setLastName] = useState("");
@@ -24,65 +25,90 @@ function Form({ route, method }) {
 
     const name = method === "login" ? "Login" : "Register";
 
-const handleSubmit = async (e) => {
-    setLoading(true);
-    e.preventDefault();
+    const handlePhoneNumberChange = (e) => {
+        let input = e.target.value.replace(/\D/g, '');
+        let formattedInput = '';
 
-    try {
-        var isSuperUser = false;
-        if (method === "login") {
-            const res = await api.post(route, { username, password });
-            localStorage.setItem(ACCESS_TOKEN, res.data.access);
-            localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        if (input.length > 0) {
+            formattedInput += input.substring(0, 4);
+            if (input.length > 4) {
+                formattedInput += '-' + input.substring(4, 7);
+            }
+            if (input.length > 7) {
+                formattedInput += '-' + input.substring(7, 11);
+            }
+        }
+        setPhoneNumber(formattedInput);
+    };
 
-            const token = localStorage.getItem(ACCESS_TOKEN);
 
-            try {
-                console.log("JWT token --->", token)
-                const decoded = jwtDecode(token);
-                const tokenExpiration = decoded.exp;
-                const now = Date.now() / 1000;
-            
-                if (tokenExpiration < now) {
-                    await refreshToken();
-                } else {
-                    isSuperUser = (decoded.is_superuser);
+    const handleSubmit = async (e) => {
+        setLoading(true);
+        e.preventDefault();
+
+        try {
+            var isSuperUser = false;
+            if (method === "login") {
+                const res = await api.post(route, { username, password });
+                localStorage.setItem(ACCESS_TOKEN, res.data.access);
+                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+                const token = localStorage.getItem(ACCESS_TOKEN);
+
+                try {
+                    console.log("JWT token --->", token)
+                    const decoded = jwtDecode(token);
+                    const tokenExpiration = decoded.exp;
+                    const now = Date.now() / 1000;
+                    
+                    if (tokenExpiration < now) {
+                        // Await refreshToken(); // Assuming you have a refreshToken function
+                    } else {
+                        isSuperUser = (decoded.is_superuser);
+                    }
+                } catch (error) {
+                    console.error("JWT decoding failed:", error);
                 }
-            } catch (error) {
-                console.error("JWT decoding failed:", error);
-            }
-            //if admin
-            if(isSuperUser){
-                navigate("/admin");
-            }
-            else{
-                navigate("/");
-            }
+                
+                if(isSuperUser){
+                    navigate("/admin");
+                }
+                else{
+                    navigate("/");
+                }
 
-        } else {
-            const res = await api.post(route, { username, password, email, first_name, last_name, employee_id });
-            navigate("/login");
+            } else {
+                const res = await api.post(route, { 
+                    username, 
+                    password, 
+                    email, 
+                    first_name, 
+                    last_name, 
+                    employee_id,
+                    phoneNumber
+                });
+                navigate("/login");
+            }
+        } catch (error) {
+            if (method === "login") {
+                console.log("Error --> " + error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Login Failed",
+                    text: "Incorrect Username or Password",
+                });
+            } else {
+                console.log("Error --> " + error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Registration Failed",
+                    text: "Username already exists",
+                });
+            }
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        if (method === "login") {
-            console.log("Error --> " + error);
-            Swal.fire({
-                icon: "error",
-                title: "Login Failed",
-                text: "Incorrect Username or Password",
-            });
-        } else {
-            console.log("Error --> " + error);
-            Swal.fire({
-                icon: "error",
-                title: "Registration Failed",
-                text: "Username already exists",
-            });
-        }
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
 
     return (
@@ -153,6 +179,20 @@ const handleSubmit = async (e) => {
                         <MdEmail className={classes.icon}/>
                     </div>
                 )}
+                {currentPath === '/register' && (
+                    <div className={classes['input-box']}>
+                        <input
+                            className={classes['form-input']}
+                            type="tel"
+                            value={phoneNumber}
+                            onChange={handlePhoneNumberChange}
+                            placeholder="Phone number"
+                            maxLength="13"
+                            required
+                        />
+                        <MdEmail className={classes.icon}/>
+                    </div>
+                )}
                 <div className={classes['input-box']}>
                     <input
                         className={classes['form-input']}
@@ -164,6 +204,13 @@ const handleSubmit = async (e) => {
                     />
                     <FaLock className={classes.icon}/>
                 </div>
+
+                {currentPath === '/login' && (
+                <div className={classes['forgot-password']}>
+                    <a href="#" onClick={() => navigate('/forgot-password')}>Forgot Password?</a>
+                </div>
+                )}
+
                 <div className={classes['login-button']}>
                     {loading && <LoadingIndicator />}
                     <button className={classes['form-button']} type="submit">{name.toUpperCase()}</button>

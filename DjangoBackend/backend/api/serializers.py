@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "password", "first_name", "last_name", "employee_id"]
+        fields = ["id", "username", "email", "password", "first_name", "last_name", "employee_id", "phoneNumber"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create (self, validate_data):
@@ -23,6 +23,7 @@ class LeaveSerializer(serializers.ModelSerializer):
                   "employee_id",
                   "email",
                   "department", 
+                  "phoneNumber",
                   "leave_type", 
                   "start_date", 
                   "end_date", 
@@ -36,7 +37,7 @@ class LeaveSerializer(serializers.ModelSerializer):
 class GetUsernameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "employee_id"]
+        fields = ["id", "username", "email", "first_name", "last_name", "employee_id", "phoneNumber"]
         extra_kwargs = {"email": {"read_only": True}, 
                         "username": {"read_only": True},
                         "first_name": {"read_only": True}, 
@@ -50,6 +51,7 @@ class GetLeaveDetails(serializers.ModelSerializer):
                   "employee_id",
                   "email",
                   "department",
+                  "phoneNumber",
                   "leave_type", 
                   "start_date", 
                   "end_date", 
@@ -67,6 +69,7 @@ class GetAllLeaveDetails(serializers.ModelSerializer):
                   "employee_id",
                   "email",
                   "department",
+                  "phoneNumber",
                   "leave_type", 
                   "start_date", 
                   "end_date", 

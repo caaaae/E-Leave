@@ -9,6 +9,7 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
     employee_name: '',
     employee_id: '',
     department: '',
+    phoneNumber: '',
     leave_type: '',
     start_date: '',
     end_date: '',
@@ -26,6 +27,7 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
         employee_id: leave.employee_id || '',
         email: leave.email || '',
         department: leave.department || '',
+        phoneNumber: leave.phoneNumber || '',
         leave_type: leave.leave_type || '',
         start_date: leave.start_date || '',
         end_date: leave.end_date || '',
@@ -51,10 +53,8 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
       // Remove supporting_doc from the payload as it's not being updated this way
       delete dataToUpdate.supporting_doc;
 
-      console.log("---> " + dataToUpdate);
-
       await api.put(`/api/leaves/update/${leave.id}/`, dataToUpdate);
-
+      
       Swal.fire({
         icon: "success",
         title: "Success",
@@ -138,6 +138,18 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
             </div>
 
             <div className={classes.formGroup}>
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className={classes.formGroup}>
               <label htmlFor="department">Department</label>
               <input
                 type="text"
@@ -158,7 +170,7 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
                 onChange={handleChange}
                 required
               >
-                <option value="">Select Type</option>
+                <option value="Vacation Leave">Vacation Leave</option>
                 <option value="Annual Leave">Annual Leave</option>
                 <option value="Sick Leave">Sick Leave</option>
                 <option value="Maternity Leave">Maternity Leave</option>
@@ -193,10 +205,10 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
               />
             </div>
             <div className={`${classes.formGroup} ${classes.fullWidth}`}>
-              <label htmlFor="reason_for_leave">Reason for Leave</label>
+              <label htmlFor="reason_leave">Reason for Leave</label>
               <textarea
-                id="reason_for_leave"
-                name="reason_for_leave"
+                id="reason_leave"
+                name="reason_leave"
                 value={formData.reason_leave}
                 onChange={handleChange}
                 rows="4"
