@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api'; 
+import api from '../publicapi'; 
 import Swal from 'sweetalert2';
 import classes from '../assets/Loginform/loginform.module.css';
 import loginImage from '../assets/Loginform/loginimage.png';

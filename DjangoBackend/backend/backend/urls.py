@@ -14,7 +14,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
 
     path("api/auth/", include("djoser.urls")),
-    path("api/auth/", include("djoser.urls.authtoken")),
+    path("api/auth/", include("djoser.urls.jwt")),
 
     path("api/user/register/", CreateUserView.as_view(), name="register"),
     path("api/", include("api.urls")),

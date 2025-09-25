@@ -56,13 +56,12 @@ function Form({ route, method }) {
                 const token = localStorage.getItem(ACCESS_TOKEN);
 
                 try {
-                    console.log("JWT token --->", token)
                     const decoded = jwtDecode(token);
                     const tokenExpiration = decoded.exp;
                     const now = Date.now() / 1000;
                     
                     if (tokenExpiration < now) {
-                        // Await refreshToken(); // Assuming you have a refreshToken function
+                        // Await refreshToken();
                     } else {
                         isSuperUser = (decoded.is_superuser);
                     }

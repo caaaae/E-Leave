@@ -24,8 +24,7 @@ function Home() {
     ]);
     const [inputMessage, setInputMessage] = useState("");
 
-    // Note: navigation functions would need to be implemented in your actual app
-    const navigate = (path) => console.log(`Navigate to: ${path}`);
+    const navigate = useNavigate();
 
     // Combined fetch function
     const fetchUserDataAndLeaveData = async () => {
