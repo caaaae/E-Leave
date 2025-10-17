@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import loginImage from '../assets/Loginform/loginimage.png';
 import classes from '../assets/HomePage/homepage.module.css';
+import Timer from '../components/CountdownTimer';
 import EditLeaveModal from '../components/EditLeaveModalIndividual';
 import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
@@ -14,6 +15,7 @@ function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentLeaveToEdit, setCurrentLeaveToEdit] = useState(null);
 
@@ -39,6 +41,18 @@ function Home() {
             // Fetch leave data for the user
             const leaveResponse = await api.get('/api/leaves/');
             setLeaveData(leaveResponse.data);
+
+            
+            const sickPendingLeave = leaveResponse.data.find(
+                (leave) => leave.leave_type === 'Sick Leave' && leave.leave_status === 'Pending'
+            );
+
+            if (sickPendingLeave) {
+                setIsTimerRunning(true);
+            } else {
+                setIsTimerRunning(false);
+            }
+
 
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -176,6 +190,7 @@ function Home() {
                 <div className={classes['main-content-box']}>
                     <div className={classes['top-bar']}>
                         <h2 className={classes['leave-history-title']}>Leave History</h2>
+                        {isTimerRunning && <Timer start={isTimerRunning} />}
                         <button className={classes['request-leave-btn']} onClick={handleRequestLeave}>
                             Request Leave
                         </button>

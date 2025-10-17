@@ -13,7 +13,6 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
     leave_type: '',
     start_date: '',
     end_date: '',
-    reason_leave: '',
     leave_status: '',
     supporting_doc: null,
   });
@@ -31,7 +30,6 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
         leave_type: leave.leave_type || '',
         start_date: leave.start_date || '',
         end_date: leave.end_date || '',
-        reason_leave: leave.reason_leave || '',
         leave_status: leave.leave_status || '',
         supporting_doc: leave.supporting_doc || null,
       });
@@ -176,6 +174,15 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
                 <option value="Maternity Leave">Maternity Leave</option>
                 <option value="Paternity Leave">Paternity Leave</option>
                 <option value="Unpaid Leave">Unpaid Leave</option>
+                <option value="Mandatory/Forced Leave">Mandatory/Forced Leave</option>
+                <option value="Special Privilege Leave">Special Privilege Leave</option>
+                <option value="Solo Parent Leave">Solo Parent Leave</option>
+                <option value="Study Leave">Study Leave</option>
+                <option value="10-Day VAWC Leave">10-Day VAWC Leave</option>
+                <option value="Rehabilitation Privilege">Rehabilitation Privilege</option>
+                <option value="Special Leave Benefits for Women">Special Leave Benefits for Women</option>
+                <option value="Special Emergency (Calamity) Leave">Special Emergency (Calamity) Leave</option>
+                <option value="Adoption Leave">Adoption Leave</option>
               </select>
             </div>
 
@@ -203,17 +210,6 @@ function EditLeaveModal({ leave, onClose, onSaveSuccess }) {
                 min={formData.start_date || new Date().toISOString().split("T")[0]}
                 required
               />
-            </div>
-            <div className={`${classes.formGroup} ${classes.fullWidth}`}>
-              <label htmlFor="reason_leave">Reason for Leave</label>
-              <textarea
-                id="reason_leave"
-                name="reason_leave"
-                value={formData.reason_leave}
-                onChange={handleChange}
-                rows="4"
-                required
-              ></textarea>
             </div>
 
             <div className={classes.formGroup}>

@@ -32,7 +32,6 @@ function LeaveRequestForm() {
             leave_type: "",
             start_date: "",
             end_date: "",
-            reason_leave: "",
             leave_status: "Pending",
         };
     });
@@ -123,6 +122,14 @@ function LeaveRequestForm() {
         formToSend.set("start_date", formattedStartDate);
         formToSend.set("end_date", formattedEndDate);
 
+        if (formData.leave_type === "Sick Leave" && supporting_doc.length === 0) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Reminder",
+                text: "You selected Sick Leave. Supporting documents must be uploaded within 3 days, or the request will be automatically rejected.",
+            });
+        }
+
         if (supporting_doc && supporting_doc.length > 0) {
             supporting_doc.forEach((file) => {
                 formToSend.append(`supporting_doc`, file);
@@ -149,7 +156,6 @@ function LeaveRequestForm() {
                     leave_type: "", 
                     start_date: "",
                     end_date: "", 
-                    reason_leave: "", 
                     leave_status: "Pending"
                 }));
                 setSelectedFile([]);
@@ -165,6 +171,22 @@ function LeaveRequestForm() {
             setLoading(false);
         }
     };
+
+    const getTotalDays = () => {
+    const { start_date, end_date } = formData;
+    if (!start_date || !end_date) return 0;
+
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+    const timeDiff = end.getTime() - start.getTime();
+
+    if (timeDiff < 0) return 0;
+
+    return Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+};
+
+    const totalDays = getTotalDays();
+
 
     return (
         <div className={classes['leave-request-container']}>
@@ -236,10 +258,8 @@ function LeaveRequestForm() {
                         required
                     >
                         <option value="Computer Science">Computer Science</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="Human Resources">Human Resources</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Marketing">Marketing</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Mathematics">Mathematics</option>
                     </select>
                 </div>
 
@@ -269,6 +289,12 @@ function LeaveRequestForm() {
                         />
                     </div>
                 </div>
+
+                <div className={classes['form-group']}>
+                    <label>Total Leave Days:</label>
+                    <p><strong>{totalDays}</strong> {totalDays === 1 ? 'day' : 'days'}</p>
+                </div>
+
                 <div className={classes['form-group']}>
                     <label htmlFor="leaveType">Leave Type</label>
                     <select
@@ -285,21 +311,24 @@ function LeaveRequestForm() {
                         <option value="Maternity Leave">Maternity Leave</option>
                         <option value="Paternity Leave">Paternity Leave</option>
                         <option value="Unpaid Leave">Unpaid Leave</option>
+                        <option value="Mandatory/Forced Leave">Mandatory/Forced Leave</option>
+                        <option value="Special Privilege Leave">Special Privilege Leave</option>
+                        <option value="Solo Parent Leave">Solo Parent Leave</option>
+                        <option value="Study Leave">Study Leave</option>
+                        <option value="10-Day VAWC Leave">10-Day VAWC Leave</option>
+                        <option value="Rehabilitation Privilege">Rehabilitation Privilege</option>
+                        <option value="Special Leave Benefits for Women">Special Leave Benefits for Women</option>
+                        <option value="Special Emergency (Calamity) Leave">Special Emergency (Calamity) Leave</option>
+                        <option value="Adoption Leave">Adoption Leave</option>
                     </select>
+                    {formData.leave_type === "Sick Leave" && (
+                        <div className={classes['notice-box']}>
+                            <p style={{ color: 'red', marginTop: '5px' }}>
+                                * For Sick Leave, supporting documents must be uploaded within 3 days after submission. Otherwise, your leave will be automatically rejected.
+                            </p>
+                        </div>
+                    )}
 
-                </div>
-
-                <div className={classes['form-group']}>
-                    <label htmlFor="reason">Reason for Leave</label>
-                    <textarea
-                        id="reason"
-                        name="reason_leave"
-                        value={formData.reason_leave}
-                        onChange={handleChange}
-                        rows="5"
-                        placeholder="Enter reason for leave"
-                        required
-                    ></textarea>
                 </div>
 
                 <div className={`${classes['form-group']} ${classes['file-upload-group']}`}>
